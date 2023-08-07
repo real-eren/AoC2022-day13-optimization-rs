@@ -18,30 +18,33 @@ pub fn day13(input: &str) -> usize {
 
 fn compare(left: &str, right: &str) -> Ordering {
     enum Token<'a> {
-        LBRACE,
-        RBRACE,
-        COMMA,
-        NUMBER(&'a str),
+        LBrace,
+        RBrace,
+        Comma,
+        Number(&'a str),
     }
 
     fn skip_whitespace(chars: &mut Peekable<CharIndices>) {
-        while let Some(_) = chars.next_if(|(_, char)| char.is_ascii_whitespace()) {}
+        while chars
+            .next_if(|(_, char)| char.is_ascii_whitespace())
+            .is_some()
+        {}
     }
 
     fn next_token<'a>(chars: &mut Peekable<CharIndices>, source: &'a str) -> Option<Token<'a>> {
         skip_whitespace(chars);
 
         Some(match chars.next()? {
-            (_, '[') => Token::LBRACE,
-            (_, ']') => Token::RBRACE,
-            (_, ',') => Token::COMMA,
+            (_, '[') => Token::LBrace,
+            (_, ']') => Token::RBrace,
+            (_, ',') => Token::Comma,
             (start, '0'..='9') => {
                 // advance while still numbers
                 let mut end = start; // inclusive!
                 while let Some((idx, _)) = chars.next_if(|(_, char)| char.is_ascii_digit()) {
                     end = idx;
                 }
-                Token::NUMBER(source.split_at(end + 1).0.split_at(start).1)
+                Token::Number(source.split_at(end + 1).0.split_at(start).1)
             }
             (idx, char) => panic!("unexpected char {char} at position {idx}"),
         })
@@ -83,7 +86,7 @@ fn compare(left: &str, right: &str) -> Ordering {
             (None, Some(_)) => return Ordering::Less,
             (Some(_), None) => return Ordering::Greater,
             (None, None) => return Ordering::Equal,
-            (Some(Token::NUMBER(left_num)), Some(Token::NUMBER(right_num))) => {
+            (Some(Token::Number(left_num)), Some(Token::Number(right_num))) => {
                 match left_num.cmp(right_num) {
                     Ordering::Equal => {}
                     cmp => return cmp,
@@ -102,8 +105,8 @@ fn compare(left: &str, right: &str) -> Ordering {
                         skip_whitespace(deeper_chars);
                         let current_pos_char = deeper_chars.peek().copied();
                         match next_token(deeper_chars, deeper_source) {
-                            Some(Token::RBRACE) => {}
-                            Some(Token::COMMA) => return ret_val,
+                            Some(Token::RBrace) => {}
+                            Some(Token::Comma) => return ret_val,
                             None => panic!("line ended before closing all the '['s"),
                             _ => panic!(
                                 "expected comma or ']' at index {}, but got `{}`",
@@ -118,13 +121,13 @@ fn compare(left: &str, right: &str) -> Ordering {
 
                 // first item in both lists were equal. Both lists at equal depth now.
             }
-            (Some(Token::NUMBER(_)), Some(Token::RBRACE)) => {
+            (Some(Token::Number(_)), Some(Token::RBrace)) => {
                 return Ordering::Greater;
             }
-            (Some(Token::RBRACE), Some(Token::NUMBER(_))) => {
+            (Some(Token::RBrace), Some(Token::Number(_))) => {
                 return Ordering::Less;
             }
-            (Some(Token::RBRACE), Some(Token::RBRACE)) => {
+            (Some(Token::RBrace), Some(Token::RBrace)) => {
                 match left_depth.cmp(&right_depth) {
                     Ordering::Equal => {}
                     cmp => return cmp,
@@ -143,14 +146,14 @@ fn compare(left: &str, right: &str) -> Ordering {
                 next_token(&mut left_chars, left),
                 next_token(&mut right_chars, right),
             ) {
-                (Some(Token::RBRACE), Some(Token::RBRACE)) => {
+                (Some(Token::RBrace), Some(Token::RBrace)) => {
                     left_depth -= 1;
                     right_depth -= 1;
                     continue;
                 }
-                (Some(Token::COMMA), Some(Token::COMMA)) => break, // just skip past them
-                (Some(Token::COMMA), Some(Token::RBRACE)) => return Ordering::Greater,
-                (Some(Token::RBRACE), Some(Token::COMMA)) => return Ordering::Less,
+                (Some(Token::Comma), Some(Token::Comma)) => break, // just skip past them
+                (Some(Token::Comma), Some(Token::RBrace)) => return Ordering::Greater,
+                (Some(Token::RBrace), Some(Token::Comma)) => return Ordering::Less,
                 (Some(_), Some(_)) => {
                     panic!("expected comma or closing bracket, got something else")
                 }

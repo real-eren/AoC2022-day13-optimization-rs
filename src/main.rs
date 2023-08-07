@@ -1,6 +1,5 @@
 mod manual_lex;
 mod naive;
-mod naive_cached;
 
 use std::time::Instant;
 
@@ -40,32 +39,39 @@ fn main() {
             name: "orig sample repeated 1K",
             input: repeated_sample.as_str(),
             expected: 15997000,
-            iters: 3000,
+            iters: 300,
         },
     ];
     println!("Created the following test data:");
-    for c in data_set.iter() {
+    for (idx, c) in data_set.iter().enumerate() {
         let name = c.name;
         let size = c.input.len();
-        let (adjusted_size, unit) = match size {
-            b @ 0..=999 => (b as f64, "bytes"),
-            kb @ 1000..=999999 => (kb as f64 / 1000., "kB"),
-            mb @ 1000000..=999999999 => (mb as f64 / 1000000., "mB?"),
-            gb => (gb as f64 / 1000000000., "gB"),
+        let iters = c.iters;
+        let size = match size {
+            b @ 0..=999 => format!("{b}B"),
+            kb @ 1000..=999999 => format!("{:.3}kB", (kb as f64 / 1000.)),
+            mb @ 1000000..=999999999 => format!("{:.3}mB", mb as f64 / 1000000.),
+            gb => format!("{:.3}gB", gb as f64 / 1000000000.),
         };
         let num_pairs = c.input.lines().count() / 3 + 1;
-        println!("  {name}: {adjusted_size}{unit}, {num_pairs} pairs")
+        println!(
+            "  {}) {name}:
+    {size},
+    {num_pairs} pairs,
+    {iters} iterations",
+            idx + 1
+        )
     }
 
     let naive = Candidate {
         name: "naive".to_string(),
-        desc: naive::DESCRIPTION.to_string(),
-        func: naive::day13,
+        desc: naive::no_pool::DESCRIPTION.to_string(),
+        func: naive::no_pool::day13,
     };
     let naive_cached = Candidate {
         name: "naive cached".to_string(),
-        desc: naive_cached::DESCRIPTION.to_string(),
-        func: naive_cached::day13,
+        desc: naive::pooled::DESCRIPTION.to_string(),
+        func: naive::pooled::day13,
     };
     let manual_lex = Candidate {
         name: "manual_lex".to_string(),
@@ -75,24 +81,38 @@ fn main() {
     let candidates: &[Candidate] = &[naive, naive_cached, manual_lex];
 
     println!("\nPrepared the following impls:");
-    for c in candidates.iter() {
-        println!("  {}: {}", c.name, c.desc)
+    for (idx, c) in candidates.iter().enumerate() {
+        println!(
+            "  {}) {}: {}",
+            char::from_u32('a' as u32 + idx as u32).unwrap(),
+            c.name,
+            c.desc
+        )
     }
 
     println!("\nstarting to test candidates...");
-    for Candidate {
-        desc: _,
-        name,
-        func,
-    } in candidates.iter()
-    {
-        println!("  Testing  impl `{name}`");
-        for &TestData {
+    for (
+        idx,
+        Candidate {
+            desc: _,
             name,
-            expected,
-            input,
-            iters,
-        } in data_set.iter()
+            func,
+        },
+    ) in candidates.iter().enumerate()
+    {
+        println!(
+            "  {}) `{name}`",
+            char::from_u32(idx as u32 + 'a' as u32).unwrap()
+        );
+        for (
+            idx,
+            &TestData {
+                name,
+                expected,
+                input,
+                iters,
+            },
+        ) in data_set.iter().enumerate()
         {
             let now = Instant::now();
             let answer = func(input);
@@ -104,10 +124,10 @@ fn main() {
             if answer != expected {
                 println!("    failed `{name}`! got {answer}, expected {expected}");
             } else {
-                println!("    {name}: {average}s");
+                println!("    {}) {name}: {average:.9}s", idx + 1);
             }
         }
-        println!("");
+        println!();
     }
 }
 
@@ -137,16 +157,16 @@ const SAMPLE: &str = "[1,1,3,1,1]
 
 #[cfg(test)]
 mod tests {
-    use crate::{manual_lex, naive, naive_cached, SAMPLE};
+    use crate::{manual_lex, naive, SAMPLE};
 
     #[test]
     fn naive() {
-        assert_eq!(naive::day13(SAMPLE), 13)
+        assert_eq!(naive::no_pool::day13(SAMPLE), 13)
     }
 
     #[test]
     fn naive_cached() {
-        assert_eq!(naive_cached::day13(SAMPLE), 13)
+        assert_eq!(naive::pooled::day13(SAMPLE), 13)
     }
 
     #[test]
