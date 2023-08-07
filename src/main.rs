@@ -1,3 +1,4 @@
+mod manual_lex;
 mod naive;
 mod naive_cached;
 
@@ -17,7 +18,8 @@ struct TestData<'a> {
 }
 
 fn main() {
-    println!("Hello, world!");
+    println!("Starting AoC.2022.day13 benchmark");
+
     println!("constructing test data...");
 
     let repeated_sample = {
@@ -27,7 +29,6 @@ fn main() {
         base.truncate(base.len() - 2);
         base
     };
-
     let data_set: &[TestData] = &[
         TestData {
             name: "original sample",
@@ -42,6 +43,20 @@ fn main() {
             iters: 3000,
         },
     ];
+    println!("Created the following test data:");
+    for c in data_set.iter() {
+        let name = c.name;
+        let size = c.input.len();
+        let (adjusted_size, unit) = match size {
+            b @ 0..=999 => (b as f64, "bytes"),
+            kb @ 1000..=999999 => (kb as f64 / 1000., "kB"),
+            mb @ 1000000..=999999999 => (mb as f64 / 1000000., "mB?"),
+            gb => (gb as f64 / 1000000000., "gB"),
+        };
+        let num_pairs = c.input.lines().count() / 3 + 1;
+        println!("  {name}: {adjusted_size}{unit}, {num_pairs} pairs")
+    }
+
     let naive = Candidate {
         name: "naive".to_string(),
         desc: naive::DESCRIPTION.to_string(),
@@ -52,10 +67,14 @@ fn main() {
         desc: naive_cached::DESCRIPTION.to_string(),
         func: naive_cached::day13,
     };
-    let candidates: &[Candidate] = &[naive, naive_cached];
+    let manual_lex = Candidate {
+        name: "manual_lex".to_string(),
+        desc: manual_lex::DESCRIPTION.to_string(),
+        func: manual_lex::day13,
+    };
+    let candidates: &[Candidate] = &[naive, naive_cached, manual_lex];
 
-    println!("\nCreated the following test data:");
-
+    println!("\nPrepared the following impls:");
     for c in candidates.iter() {
         println!("  {}: {}", c.name, c.desc)
     }
@@ -115,3 +134,23 @@ const SAMPLE: &str = "[1,1,3,1,1]
 
 [1,[2,[3,[4,[5,6,7]]]],8,9]
 [1,[2,[3,[4,[5,6,0]]]],8,9]";
+
+#[cfg(test)]
+mod tests {
+    use crate::{manual_lex, naive, naive_cached, SAMPLE};
+
+    #[test]
+    fn naive() {
+        assert_eq!(naive::day13(SAMPLE), 13)
+    }
+
+    #[test]
+    fn naive_cached() {
+        assert_eq!(naive_cached::day13(SAMPLE), 13)
+    }
+
+    #[test]
+    fn manual_lex() {
+        assert_eq!(manual_lex::day13(SAMPLE), 13)
+    }
+}
