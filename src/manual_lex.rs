@@ -1,19 +1,10 @@
+use crate::shared::day13_framework;
 use std::{cmp::Ordering, iter::Peekable, str::CharIndices};
 
 pub const DESCRIPTION: &str = "O(1) space, char-by-char hand-rolled lexer";
 
 pub fn day13(input: &str) -> usize {
-    input
-        .split("\n\n")
-        .map(|chunk| {
-            chunk
-                .split_once('\n')
-                .unwrap_or_else(|| panic!("strange format: {chunk}"))
-        })
-        .map(|(left, right)| compare(left, right))
-        .enumerate()
-        .filter_map(|(idx, ord)| if ord.is_lt() { Some(idx + 1) } else { None })
-        .sum()
+    day13_framework(input, compare)
 }
 
 fn compare(left: &str, right: &str) -> Ordering {

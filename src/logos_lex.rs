@@ -1,20 +1,11 @@
+use crate::shared::day13_framework;
 use logos::{Lexer, Logos};
 use std::cmp::Ordering;
 
 pub const DESCRIPTION: &str = "lexer generated with `logos`";
 
 pub fn day13(input: &str) -> usize {
-    input
-        .split("\n\n")
-        .map(|chunk| {
-            chunk
-                .split_once('\n')
-                .unwrap_or_else(|| panic!("strange format: {chunk}"))
-        })
-        .map(|(left, right)| compare(left, right))
-        .enumerate()
-        .filter_map(|(idx, ord)| if ord.is_lt() { Some(idx + 1) } else { None })
-        .sum()
+    day13_framework(input, compare)
 }
 
 fn compare(left: &str, right: &str) -> Ordering {

@@ -1,6 +1,7 @@
 use std::{cmp::Ordering, iter::Peekable};
 
 use self::res_pool::Alloc;
+use crate::shared::day13_framework;
 
 pub mod no_pool {
     use super::{day13_generalized, res_pool::GlobalHeapProxy};
@@ -34,24 +35,14 @@ fn day13_generalized(
     list_pool: &mut impl Alloc<Vec<Element>>,
     string_pool: &mut impl Alloc<String>,
 ) -> usize {
-    input
-        .split("\n\n")
-        .map(|chunk| {
-            chunk
-                .split_once('\n')
-                .unwrap_or_else(|| panic!("strange format: {chunk}"))
-        })
-        .map(|(left, right)| {
-            let left = Element::parse(left, list_pool, string_pool);
-            let right = Element::parse(right, list_pool, string_pool);
-            let cmp = left.cmp(&right);
-            left.scavenge(list_pool, string_pool);
-            right.scavenge(list_pool, string_pool);
-            cmp
-        })
-        .enumerate()
-        .filter_map(|(idx, ord)| if ord.is_lt() { Some(idx + 1) } else { None })
-        .sum()
+    day13_framework(input, |left, right| {
+        let left = Element::parse(left, list_pool, string_pool);
+        let right = Element::parse(right, list_pool, string_pool);
+        let cmp = left.cmp(&right);
+        left.scavenge(list_pool, string_pool);
+        right.scavenge(list_pool, string_pool);
+        cmp
+    })
 }
 
 #[derive(PartialEq, Eq, Debug)]

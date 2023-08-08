@@ -1,6 +1,7 @@
 mod logos_lex;
 mod manual_lex;
 mod naive;
+mod shared;
 
 use std::time::Instant;
 
