@@ -1,3 +1,4 @@
+mod logos_lex;
 mod manual_lex;
 mod naive;
 
@@ -78,7 +79,12 @@ fn main() {
         desc: manual_lex::DESCRIPTION.to_string(),
         func: manual_lex::day13,
     };
-    let candidates: &[Candidate] = &[naive, naive_cached, manual_lex];
+    let logos_lex = Candidate {
+        name: "logos_lex".to_string(),
+        desc: logos_lex::DESCRIPTION.to_string(),
+        func: logos_lex::day13,
+    };
+    let candidates: &[Candidate] = &[naive, naive_cached, manual_lex, logos_lex];
 
     println!("\nPrepared the following impls:");
     for (idx, c) in candidates.iter().enumerate() {
@@ -157,7 +163,7 @@ const SAMPLE: &str = "[1,1,3,1,1]
 
 #[cfg(test)]
 mod tests {
-    use crate::{manual_lex, naive, SAMPLE};
+    use crate::{logos_lex, manual_lex, naive, SAMPLE};
 
     #[test]
     fn naive() {
@@ -172,5 +178,10 @@ mod tests {
     #[test]
     fn manual_lex() {
         assert_eq!(manual_lex::day13(SAMPLE), 13)
+    }
+
+    #[test]
+    fn logos_lex() {
+        assert_eq!(logos_lex::day13(SAMPLE), 13)
     }
 }
