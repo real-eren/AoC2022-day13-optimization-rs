@@ -1,3 +1,8 @@
+/// Dependency for day13 implementations.
+///
+/// The control could be inverted (all impls only export the line-compare closure),
+/// but ATM I don't see a drastically different alternative input parsing approach that would be
+/// interesting to benchmark
 use std::cmp::Ordering;
 
 /// Outline of a solution - extracts pairs and passes them to the given line comparator

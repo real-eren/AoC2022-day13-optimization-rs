@@ -1,6 +1,7 @@
 mod logos_lex;
 mod manual_lex;
 mod naive;
+mod prefix_comp_then_logos_lex;
 mod shared;
 
 use std::time::Instant;
@@ -18,6 +19,7 @@ struct TestData<'a> {
     iters: usize,
 }
 
+// TODO: replace with `criterion` crate
 fn main() {
     println!("Starting AoC.2022.day13 benchmark");
 
@@ -85,7 +87,24 @@ fn main() {
         desc: logos_lex::DESCRIPTION.to_string(),
         func: logos_lex::day13,
     };
-    let candidates: &[Candidate] = &[naive, naive_cached, manual_lex, logos_lex];
+    let skip_prefix_then_lex_128 = Candidate {
+        name: "skip_prefix_then_lex".to_string(),
+        desc: prefix_comp_then_logos_lex::DESCRIPTION.to_string(),
+        func: prefix_comp_then_logos_lex::day13::<128>,
+    };
+    let skip_prefix_then_lex_16 = Candidate {
+        name: "skip_prefix_then_lex".to_string(),
+        desc: prefix_comp_then_logos_lex::DESCRIPTION.to_string(),
+        func: prefix_comp_then_logos_lex::day13::<16>,
+    };
+    let candidates: &[Candidate] = &[
+        naive,
+        naive_cached,
+        manual_lex,
+        logos_lex,
+        skip_prefix_then_lex_128,
+        skip_prefix_then_lex_16,
+    ];
 
     println!("\nPrepared the following impls:");
     for (idx, c) in candidates.iter().enumerate() {
@@ -138,6 +157,7 @@ fn main() {
     }
 }
 
+/// input provided in the AoC entry
 const SAMPLE: &str = "[1,1,3,1,1]
 [1,1,5,1,1]
 
@@ -164,7 +184,7 @@ const SAMPLE: &str = "[1,1,3,1,1]
 
 #[cfg(test)]
 mod tests {
-    use crate::{logos_lex, manual_lex, naive, SAMPLE};
+    use crate::{logos_lex, manual_lex, naive, prefix_comp_then_logos_lex, SAMPLE};
 
     #[test]
     fn naive() {
@@ -184,5 +204,10 @@ mod tests {
     #[test]
     fn logos_lex() {
         assert_eq!(logos_lex::day13(SAMPLE), 13)
+    }
+
+    #[test]
+    fn skip_prefix_then_lex() {
+        assert_eq!(prefix_comp_then_logos_lex::day13::<128>(SAMPLE), 13)
     }
 }
