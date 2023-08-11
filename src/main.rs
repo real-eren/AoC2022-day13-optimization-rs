@@ -2,6 +2,7 @@ mod input_handling_baseline;
 mod logos_lex;
 mod manual_lex;
 mod naive;
+mod naive_slice;
 mod prefix_comp_then_logos_lex;
 mod shared;
 
@@ -99,6 +100,16 @@ fn main() {
         desc: naive::pooled::DESCRIPTION.to_string(),
         func: naive::pooled::day13,
     };
+    let naive_slice = Candidate {
+        name: "naive slice".to_string(),
+        desc: naive_slice::no_pool::DESCRIPTION.to_string(),
+        func: naive_slice::no_pool::day13,
+    };
+    let naive_slice_cached = Candidate {
+        name: "naive slice cached".to_string(),
+        desc: naive_slice::pooled::DESCRIPTION.to_string(),
+        func: naive_slice::pooled::day13,
+    };
     let manual_lex = Candidate {
         name: "manual_lex".to_string(),
         desc: manual_lex::DESCRIPTION.to_string(),
@@ -123,6 +134,8 @@ fn main() {
         just_find_lines,
         naive,
         naive_cached,
+        naive_slice,
+        naive_slice_cached,
         manual_lex,
         logos_lex,
         skip_prefix_then_lex_128,
@@ -207,7 +220,7 @@ const SAMPLE: &str = "[1,1,3,1,1]
 
 #[cfg(test)]
 mod tests {
-    use crate::{logos_lex, manual_lex, naive, prefix_comp_then_logos_lex, SAMPLE};
+    use crate::{logos_lex, manual_lex, naive, naive_slice, prefix_comp_then_logos_lex, SAMPLE};
 
     #[test]
     fn naive() {
@@ -217,6 +230,16 @@ mod tests {
     #[test]
     fn naive_cached() {
         assert_eq!(naive::pooled::day13(SAMPLE), 13)
+    }
+
+    #[test]
+    fn naive_slice() {
+        assert_eq!(naive_slice::no_pool::day13(SAMPLE), 13)
+    }
+
+    #[test]
+    fn naive_slice_cached() {
+        assert_eq!(naive_slice::pooled::day13(SAMPLE), 13)
     }
 
     #[test]
