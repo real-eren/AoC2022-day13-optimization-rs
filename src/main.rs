@@ -1,3 +1,4 @@
+mod input_handling_baseline;
 mod logos_lex;
 mod manual_lex;
 mod naive;
@@ -19,9 +20,25 @@ struct TestData<'a> {
     iters: usize,
 }
 
+fn bench_instant_latency<const N: usize>() {
+    if N > 1_000_000 {
+        // ideally we'd check this at compile time
+        panic!("N for bench_instant_latency is too large!")
+    }
+    let instant_data: [u128; N] = core::array::from_fn(|_| Instant::now().elapsed().as_nanos());
+    let min = instant_data.iter().min().copied().unwrap();
+    let max = instant_data.iter().max().copied().unwrap();
+    let average: u128 = instant_data.iter().copied().sum::<u128>() / N as u128;
+    println!(
+        "\n[{min}, {max}] w/ average {average} nanoseconds latency in Instant::{{now,elapsed}}, average of {N} samples\n",
+    );
+}
+
 // TODO: replace with `criterion` crate
 fn main() {
     println!("Starting AoC.2022.day13 benchmark");
+
+    bench_instant_latency::<10000>();
 
     println!("constructing test data...");
 
@@ -67,6 +84,11 @@ fn main() {
         )
     }
 
+    let just_find_lines = Candidate {
+        name: "input handling baseline".to_string(),
+        desc: input_handling_baseline::DESCRIPTION.to_string(),
+        func: input_handling_baseline::day13,
+    };
     let naive = Candidate {
         name: "naive".to_string(),
         desc: naive::no_pool::DESCRIPTION.to_string(),
@@ -98,6 +120,7 @@ fn main() {
         func: prefix_comp_then_logos_lex::day13::<16>,
     };
     let candidates: &[Candidate] = &[
+        just_find_lines,
         naive,
         naive_cached,
         manual_lex,
@@ -118,7 +141,7 @@ fn main() {
 
     println!("\nstarting to test candidates...");
     for (
-        idx,
+        c_idx,
         Candidate {
             desc: _,
             name,
@@ -128,7 +151,7 @@ fn main() {
     {
         println!(
             "  {}) `{name}`",
-            char::from_u32(idx as u32 + 'a' as u32).unwrap()
+            char::from_u32(c_idx as u32 + 'a' as u32).unwrap()
         );
         for (
             idx,
@@ -147,7 +170,7 @@ fn main() {
             }
             let elapsed = now.elapsed().as_secs_f64();
             let average = elapsed / iters as f64;
-            if answer != expected {
+            if answer != expected && c_idx != 0 {
                 println!("    failed `{name}`! got {answer}, expected {expected}");
             } else {
                 println!("    {}) {name}: {average:.9}s", idx + 1);
