@@ -5,5 +5,18 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[lib]
+name = "day13_compare"
+path = "src/lib.rs"
+
+
 [dependencies]
 logos = "0.13"
+
+[dev-dependencies]
+criterion = { version = "0.5.1", features = ["html_reports"] }
+duplicate = "1.0.0"
+
+[[bench]]
+name = "day13_impls"
+harness = false
