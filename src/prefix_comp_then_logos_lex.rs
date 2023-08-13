@@ -98,7 +98,7 @@ fn compare<const N: usize>(left: &str, right: &str) -> Ordering {
                 }
                 lexer.slice()
             };
-            match (deeper_number.cmp(&other_number), which_is_list) {
+            match (deeper_number.cmp(other_number), which_is_list) {
                 (Ordering::Equal, _) => {}
                 (cmp, WhichIsList::Left) => return cmp,
                 (cmp, WhichIsList::Right) => return cmp.reverse(),
@@ -134,11 +134,11 @@ fn compare<const N: usize>(left: &str, right: &str) -> Ordering {
         // state we're in. Given that we are assuming valid syntax, it may very well be possible,
         // and is worth investigating.
         loop {
-            let (left_char, right_char) = match (left.get(0), right.get(0)) {
+            let (left_char, right_char) = match (left.first(), right.first()) {
                 (None, None) => return Ordering::Equal,
                 (None, Some(_)) => return Ordering::Less,
                 (Some(_), None) => return Ordering::Greater,
-                (Some(l), Some(r)) => (l.clone(), r.clone()),
+                (Some(l), Some(r)) => (*l, *r),
             };
             left = &left[1..];
             right = &right[1..];
