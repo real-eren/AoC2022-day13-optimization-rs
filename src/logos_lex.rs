@@ -9,12 +9,13 @@ pub fn day13(input: &str) -> usize {
 }
 
 fn compare(left: &str, right: &str) -> Ordering {
-    fn next_comparable_token(lexer: &mut Lexer<Token>, depth: &mut usize) -> Option<Token> {
+    fn next_comparable_token(lexer: &mut Lexer<Token>) -> Option<(Token, usize)> {
+        let mut depth_change = 0;
         loop {
             match lexer.next()?.unwrap() {
                 Token::Comma => panic!("didn't expect comma at index {}", lexer.span().start),
-                Token::LBrace => *depth += 1,
-                token => return Some(token),
+                Token::LBraces => depth_change += lexer.span().len(),
+                token => return Some((token, depth_change)),
             }
         }
     }
@@ -25,8 +26,21 @@ fn compare(left: &str, right: &str) -> Ordering {
     let mut right_depth = 0;
 
     loop {
-        let left_token = next_comparable_token(&mut left, &mut left_depth);
-        let right_token = next_comparable_token(&mut right, &mut right_depth);
+        let left_token = next_comparable_token(&mut left);
+        let left_token = match left_token {
+            Some((tok, d)) => {
+                left_depth += d;
+                Some(tok)
+            }
+            None => None,
+        };
+        let right_token = match next_comparable_token(&mut right) {
+            Some((tok, d)) => {
+                right_depth += d;
+                Some(tok)
+            }
+            None => None,
+        };
 
         match (left_token, right_token) {
             (None, Some(_)) => return Ordering::Less,
@@ -54,7 +68,7 @@ fn compare(left: &str, right: &str) -> Ordering {
                         match token {
                             Token::RBrace => {}
                             Token::Comma => return ret_val,
-                            Token::LBrace => panic!("'[' immediately after ']' -> expected comma"),
+                            Token::LBraces => panic!("'[' immediately after ']' -> expected comma"),
                             Token::Number => panic!(
                                 "number {} immediately after ']' -> expected comma",
                                 deeper_chars.slice()
@@ -118,13 +132,13 @@ fn compare(left: &str, right: &str) -> Ordering {
 }
 
 #[derive(Logos, Debug, PartialEq)]
-#[logos(skip r"[ \t\n\f]+")]
+#[logos(skip r"[ ]+")]
 enum Token {
     #[token(",")]
     Comma,
 
-    #[token("[")]
-    LBrace,
+    #[regex("\\[+")]
+    LBraces,
 
     #[token("]")]
     RBrace,

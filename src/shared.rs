@@ -2,6 +2,7 @@
 use std::cmp::Ordering;
 
 /// Outline of a solution - extracts pairs and passes them to the given line comparator
+#[inline(always)]
 pub(crate) fn day13_framework(
     mut input: &str,
     mut line_comparator: impl FnMut(&str, &str) -> Ordering,
@@ -19,5 +20,5 @@ pub(crate) fn day13_framework(
         input = rem.trim_start_matches('\n');
         idx += 1;
     }
-    return count;
+    count
 }

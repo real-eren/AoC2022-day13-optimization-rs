@@ -1,5 +1,9 @@
 use crate::shared::day13_framework;
-use std::{cmp::Ordering, iter::Peekable, str::CharIndices};
+use std::{
+    cmp::Ordering,
+    iter::{Enumerate, Peekable},
+    str::Bytes,
+};
 
 pub const DESCRIPTION: &str = "O(1) space, char-by-char hand-rolled lexer";
 
@@ -15,21 +19,34 @@ fn compare(left: &str, right: &str) -> Ordering {
         Number(&'a str),
     }
 
-    fn skip_whitespace(chars: &mut Peekable<CharIndices>) {
+    #[inline(always)]
+    fn skip_whitespace(chars: &mut Peekable<Enumerate<Bytes>>) {
+        let Some((_, b)) = chars.peek() else { return };
+        if *b != b' ' {
+            return;
+        }
+        chars.next();
         while chars
             .next_if(|(_, char)| char.is_ascii_whitespace())
             .is_some()
         {}
     }
 
-    fn next_token<'a>(chars: &mut Peekable<CharIndices>, source: &'a str) -> Option<Token<'a>> {
-        skip_whitespace(chars);
+    fn next_token<'a>(
+        chars: &mut Peekable<Enumerate<Bytes>>,
+        source: &'a str,
+    ) -> Option<Token<'a>> {
+        if let Some((_, b)) = chars.peek() {
+            if *b == b' ' {
+                skip_whitespace(chars);
+            }
+        }
 
         Some(match chars.next()? {
-            (_, '[') => Token::LBrace,
-            (_, ']') => Token::RBrace,
-            (_, ',') => Token::Comma,
-            (start, '0'..='9') => {
+            (_, b'[') => Token::LBrace,
+            (_, b']') => Token::RBrace,
+            (_, b',') => Token::Comma,
+            (start, b'0'..=b'9') => {
                 // advance while still numbers
                 let mut end = start; // inclusive!
                 while let Some((idx, _)) = chars.next_if(|(_, char)| char.is_ascii_digit()) {
@@ -42,28 +59,28 @@ fn compare(left: &str, right: &str) -> Ordering {
     }
 
     fn next_comparable_token<'a>(
-        chars: &mut Peekable<CharIndices>,
+        chars: &mut Peekable<Enumerate<Bytes>>,
         source: &'a str,
         depth: &mut usize,
     ) -> Option<Token<'a>> {
         loop {
             skip_whitespace(chars);
             match chars.peek()? {
-                (_, ']' | '0'..='9') => return next_token(chars, source),
-                (_, '[') => {
+                (_, b']' | b'0'..=b'9') => return next_token(chars, source),
+                (_, b'[') => {
                     chars.next();
                     *depth += 1;
                 }
-                (idx, ',') => panic!("didn't expect comma at index {idx}"),
+                (idx, b',') => panic!("didn't expect comma at index {idx}"),
                 (idx, char) => panic!("invalid character `{char}` at index `{idx}`"),
             }
         }
     }
 
-    let mut left_chars = left.char_indices().peekable();
+    let mut left_chars = left.bytes().enumerate().peekable();
     let mut left_depth = 0;
 
-    let mut right_chars = right.char_indices().peekable();
+    let mut right_chars = right.bytes().enumerate().peekable();
     let mut right_depth = 0;
 
     // loop and compare tokens.
