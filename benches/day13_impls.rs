@@ -10,7 +10,7 @@ use std::{
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
 use day13_compare::{
     input_handling_baseline, logos_lex, manual_lex, naive, naive_slice, prefix_comp_then_logos_lex,
-    SAMPLE,
+    single_pass_prefix_comp_then_logos_lex, SAMPLE,
 };
 use duplicate::duplicate;
 
@@ -118,7 +118,7 @@ fn bench_day13_impls(c: &mut Criterion) {
 
         duplicate! {
             [
-                module_name; [naive::pooled]; [naive::no_pool]; [naive_slice::pooled]; [naive_slice::no_pool]; [manual_lex]; [logos_lex]; [input_handling_baseline];
+                module_name; [naive::pooled]; [naive::no_pool]; [naive_slice::pooled]; [naive_slice::no_pool]; [manual_lex]; [logos_lex]; [input_handling_baseline]; [single_pass_prefix_comp_then_logos_lex];
             ]
             group.bench_with_input(BenchmarkId::new(stringify!(module_name), name), input, |b, i| {
                 b.iter(|| module_name::day13(i))

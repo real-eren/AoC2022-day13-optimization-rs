@@ -3,7 +3,7 @@ An informal case study on the performance of various approaches to solving the p
 Major points can be navigated with the git tags
 - line-splitting-v1
 - line-splitting-v2
-- line-splitting-v2-modded-lex
+- line-splitting-v2-modded-lex+single-pass
 
 # Problem
 The full prompt can be found at https://adventofcode.com/2022/day/13
@@ -125,11 +125,19 @@ heaptrack $BENCH --bench --profile-time 10 Day13_A/prefix_comp
 Here is a helpful intro to [Rust + Criterion + Valgrind](https://nickb.dev/blog/guidelines-on-benchmarking-and-rust/)
 ```
 # build bench profile, but don't run
+# as of this writing, cargo build --bench was *not* equivalent
 RUSTFLAGS="-g" CARGO_PROFILE_BENCH_DEBUG="true" cargo bench --no-run
 
 # find the newly created executable with the prefix "day13_impls" (should be in the console output of the above cargo command)
 BENCH="./target/release/deps/day13_impls-43b168dda538aecb"
 valgrind --tool=callgrind --dump-instr=yes --collect-jumps=yes --cache-sim=yes $BENCH --bench --profile 10
+```
+
+### [Perf](https://perf.wiki.kernel.org/index.php/Main_Page)
+(I installed it through the linux-tools-`uname -r` package in apt)
+```
+# follow earlier instructions for building and finding the bench executable
+perf stat -d -d -d -- $BENCH  --bench --profile-time 10 Day13_A/to
 ```
 
 ### [Flamegraph](https://github.com/flamegraph-rs/flamegraph)
@@ -139,7 +147,7 @@ This uses `perf` to (basically) sample function calls, and can be used to identi
 # follow earlier instructions for building and finding the bench executable
 flamegraph -- $BENCH --bench --profile-time 10
 ```
-I would strongly recommend running the above benchmark with a single implementation selected, and possibly a single input.
+Because a lot of data will be captured (output file defaults to "./perf.data"), I would strongly recommend running the above benchmark with a single implementation selected, and possibly a single input.
 ex:
 to run just the 'logos_lex' impl on all the input: `flamegraph -- $BENCH --bench --profile-time 10 "Day13_A/logos_lex"`
 to run just the 'logos_lex' impl on just the 'original input': `flamegraph -- $BENCH --bench --profile-time 10 "Day13_A/logos_lex/original input"`

@@ -5,6 +5,7 @@ pub mod naive;
 pub mod naive_slice;
 pub mod prefix_comp_then_logos_lex;
 mod shared;
+pub mod single_pass_prefix_comp_then_logos_lex;
 
 pub const SAMPLE: &str = "[1,1,3,1,1]
 [1,1,5,1,1]
@@ -31,7 +32,10 @@ pub const SAMPLE: &str = "[1,1,3,1,1]
 [1,[2,[3,[4,[5,6,0]]]],8,9]";
 #[cfg(test)]
 mod tests {
-    use crate::{logos_lex, manual_lex, naive, naive_slice, prefix_comp_then_logos_lex, SAMPLE};
+    use crate::{
+        logos_lex, manual_lex, naive, naive_slice, prefix_comp_then_logos_lex,
+        single_pass_prefix_comp_then_logos_lex, SAMPLE,
+    };
 
     #[test]
     fn naive() {
@@ -66,5 +70,10 @@ mod tests {
     #[test]
     fn skip_prefix_then_lex() {
         assert_eq!(prefix_comp_then_logos_lex::day13::<128>(SAMPLE), 13)
+    }
+
+    #[test]
+    fn to_rename() {
+        assert_eq!(single_pass_prefix_comp_then_logos_lex::day13(SAMPLE), 13)
     }
 }
