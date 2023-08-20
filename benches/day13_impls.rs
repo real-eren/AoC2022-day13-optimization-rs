@@ -15,25 +15,18 @@ use day13_compare::{
 use duplicate::duplicate;
 
 struct TestData<'a> {
-    name: &'a str,
+    name: Cow<'a, str>,
     input_fn: Box<dyn Fn() -> Option<Cow<'static, str>>>,
 }
 
 fn bench_day13_impls(c: &mut Criterion) {
-    let repeated_sample = {
-        let mut base = SAMPLE.to_string();
-        base.push_str("\n\n");
-        base = base.repeat(1000);
-        base.truncate(base.len() - 2);
-        base
-    };
     let data_set = vec![
         TestData {
-            name: "original sample",
+            name: "original sample".into(),
             input_fn: Box::new(|| Some(SAMPLE.into())),
         },
         TestData {
-            name: "orig sample repeated 1K",
+            name: "orig sample repeated 1K".into(),
             input_fn: Box::new(|| {
                 let mut base = SAMPLE.to_string();
                 base.push_str("\n\n");
@@ -43,7 +36,7 @@ fn bench_day13_impls(c: &mut Criterion) {
             }),
         },
         TestData {
-            name: "single 10kB number, last digit different",
+            name: "single 10kB number, last digit different".into(),
             input_fn: Box::new(|| {
                 const S: &str = "1029637485";
                 const N: usize = 1000;
@@ -64,7 +57,7 @@ fn bench_day13_impls(c: &mut Criterion) {
             }),
         },
         TestData {
-            name: "single 10kB number, first digit different",
+            name: "single 10kB number, first digit different".into(),
             input_fn: Box::new(|| {
                 const S: &str = "1029637485";
                 const N: usize = 1000;
@@ -86,35 +79,69 @@ fn bench_day13_impls(c: &mut Criterion) {
             }),
         },
     ];
-
-    fn from_file(path: &Path) -> Option<String> {
-        match std::fs::read_to_string(path) {
-            Ok(string) => Some(string),
-            Err(e) => {
-                eprintln!("{}: {e}", path.to_str().unwrap_or(""));
-                None
-            }
-        }
-    }
-
-    fn for_each_file(dir: &Path, cb: &dyn Fn(&Path)) -> std::io::Result<()> {
-        if dir.is_dir() {
-            for entry in std::fs::read_dir(dir)? {
-                let entry = entry?;
-                let path = entry.path();
-                if path.is_file() {
-                    cb(path.as_path());
+    fn for_each_file<'fs>(dir: &'fs Path) -> Vec<TestData<'fs>> {
+        fn from_file(path: &Path) -> Option<String> {
+            match std::fs::read_to_string(path) {
+                Ok(string) => Some(string),
+                Err(e) => {
+                    println!("{}: {e}", path.to_string_lossy());
+                    None
                 }
             }
         }
-        Ok(())
+
+        if !dir.exists() {
+            eprintln!("was looking for input files in path {}, but it does not exist. (run bench in project root dir, or move input files to './benches/resources/')", dir.to_string_lossy());
+            return Vec::new();
+        }
+        if !dir.is_dir() {
+            return Vec::new();
+        }
+        let entries = match std::fs::read_dir(dir) {
+            Ok(dir_entry) => dir_entry,
+            Err(e) => {
+                eprintln!("while iterating over input files: {e}");
+                return Vec::new();
+            }
+        };
+        entries
+            .into_iter()
+            .filter_map(|entry| {
+                match entry {
+                    Ok(dir_entry) => Some(dir_entry),
+                    Err(e) => {
+                        eprintln!("{e}");
+                        None
+                    }
+                }
+                .and_then(|dir_entry| {
+                    let path = dir_entry.path();
+                    if path.is_file() {
+                        Some(TestData {
+                            name: format!(
+                                "file-{}",
+                                path.as_path().file_name().unwrap().to_string_lossy()
+                            )
+                            .into(),
+                            input_fn: Box::new(move || from_file(path.as_path()).map(Cow::Owned)),
+                        })
+                    } else {
+                        None
+                    }
+                })
+            })
+            .collect()
     }
 
-    // TODO: loop over dir, load files in
     let mut group = c.benchmark_group("Day13_A");
-    for TestData { name, input_fn } in data_set {
-        let Some(input) = input_fn() else { continue; };
-        let input: &str = input.borrow();
+    for TestData { name, input_fn } in data_set
+        .iter()
+        .chain(for_each_file(Path::new("./benches/resources/")).iter())
+    {
+        let Some(ref input) = input_fn() else {
+                println!("failed to generate/retrieve input for {name}");
+                continue;
+        };
 
         duplicate! {
             [
@@ -126,7 +153,7 @@ fn bench_day13_impls(c: &mut Criterion) {
         }
         duplicate! {
             [chunk_size; [16]; [128]]
-            group.bench_with_input(BenchmarkId::new(concat!("prefix_comp_then_logos_lex", stringify!(chunk_size)), name), input, |b, i| {
+            group.bench_with_input(BenchmarkId::new(concat!("prefix_comp_then_logos_lex", chunk_size), name), input, |b, i| {
                 b.iter(|| prefix_comp_then_logos_lex::day13::<chunk_size>(i))
             });
         }

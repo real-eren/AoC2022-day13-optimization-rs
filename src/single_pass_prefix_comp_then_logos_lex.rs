@@ -10,6 +10,10 @@ pub fn day13(mut input: &str) -> usize {
         let Some((left, rem)) = input.split_once('\n') else { break; };
 
         let (cmp, rem_idx_after_comparison) = compare_first_line(left, rem);
+        debug_assert!({
+            let max_idx_in_rem = rem.find('\n').unwrap_or(rem.len());
+            rem_idx_after_comparison <= max_idx_in_rem
+        });
 
         if cmp.is_lt() {
             count += idx;
@@ -46,6 +50,7 @@ fn compare_first_line(left: &str, rem: &str) -> (Ordering, usize) {
     // skip common prefix, lex until decide or equal, then loop
     loop {
         let idx_of_first_diff = mismatch::<16>(left_bytes, rem_bytes);
+        index_into_rem += idx_of_first_diff;
         // could be equal to length of both - equal
         // could be equal to length of one - that's lesser
         // could be less than either - need to match on byte then possibly do lexing
@@ -57,28 +62,25 @@ fn compare_first_line(left: &str, rem: &str) -> (Ordering, usize) {
             (true, false) => {
                 if rem_bytes[idx_of_first_diff] == b'\n' {
                     // left ran out, but rem's next character was newline, so left == right.
-                    return (Ordering::Equal, left.len());
+                    return (Ordering::Equal, index_into_rem);
                 } else {
                     // assuming valid syntax up to this point, last elem must have been number,
                     // and right's number was just longer.
-                    return (Ordering::Less, left.len());
+                    return (Ordering::Less, index_into_rem);
                 }
             }
             (false, true) => {
                 // assuming valid syntax up to this point, left was longer.
-                return (Ordering::Greater, rem.len());
+                return (Ordering::Greater, index_into_rem);
             }
             (false, false) => { /* need to compare below */ }
         }
-        index_into_rem += idx_of_first_diff;
-
-        let left_char = left_bytes[idx_of_first_diff];
-        let right_char = rem_bytes[idx_of_first_diff];
-
-        // maybe advance left_bytes and rem_bytes?
 
         left_bytes = &left_bytes[idx_of_first_diff..];
         rem_bytes = &rem_bytes[idx_of_first_diff..];
+
+        let left_char = left_bytes[0];
+        let right_char = rem_bytes[0];
 
         #[derive(Clone, Copy)]
         enum WhichIsList {
@@ -94,11 +96,14 @@ fn compare_first_line(left: &str, rem: &str) -> (Ordering, usize) {
             (b']', b',' | b'[') | (b']' | b',', b'0'..=b'9') => {
                 return (Ordering::Less, index_into_rem)
             }
-            (b'[', b'[') | (b']', b']') | (b',', b',') => unreachable!(),
+            (b'[', b'[') | (b']', b']') | (b',', b',') | (_, b'\n') => unreachable!(),
             (b'[', b',') | (b',', b'[') => panic!("invalid syntax"),
             (b'0'..=b'9', b'[') => WhichIsList::Right,
             (b'[', b'0'..=b'9') => WhichIsList::Left,
-            (left, right) => panic!("invalid input: at least one of :`{left}`, `{right}`"),
+            (left, right) => panic!(
+                "invalid input: at least one of :`{}`, `{}`",
+                left as char, right as char
+            ),
         };
         // at this point, one is pointing to the start of a number, the other to the start of a list
         {
