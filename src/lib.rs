@@ -31,7 +31,34 @@ pub const SAMPLE: &str = "[1,1,3,1,1]
 [1,[2,[3,[4,[5,6,7]]]],8,9]
 [1,[2,[3,[4,[5,6,0]]]],8,9]";
 
-const OTHER: &str = "[51246543,3456543,[[23456]]]
+#[cfg(test)]
+mod tests {
+    use crate::{
+        logos_lex, manual_lex, naive, naive_slice, prefix_comp_then_logos_lex,
+        single_pass_prefix_comp_then_logos_lex, SAMPLE,
+    };
+    use duplicate::duplicate;
+
+    duplicate! {
+        [
+            func name;
+            [naive::pooled::day13] [naive_pool];
+            [naive::no_pool::day13] [naive_no_pool];
+            [naive_slice::no_pool::day13] [naive_slice_no_pool];
+            [naive_slice::pooled::day13] [naive_slice_pool];
+            [manual_lex::day13] [manual_lex_pool];
+            [logos_lex::day13] [logos_lex];
+            [prefix_comp_then_logos_lex::day13::<16>] [prefix_comp_then_logos_lex];
+            [single_pass_prefix_comp_then_logos_lex::day13] [single_pass_prefix_comp];
+        ]
+        #[test]
+        fn name() {
+            assert_eq!(func(SAMPLE), 13);
+            assert_eq!(func(OTHER), 1 + 0 + 5 + 7 + 8 + 10);
+            assert_eq!(func("[]\n[]"), 0);
+        }
+    }
+    const OTHER: &str = "[51246543,3456543,[[23456]]]
 [51246543,3456543,23476]
 
 [4565,[9298,[[266],756],54234],9876,13513]
@@ -60,33 +87,4 @@ const OTHER: &str = "[51246543,3456543,[[23456]]]
 
 [[987654321],[123456789],[[987654321]],[[123456789]],987654320]
 [987654321,123456789,987654321,123456789,[[987654321]]]";
-// */
-#[cfg(test)]
-mod tests {
-    use duplicate::duplicate;
-
-    use crate::{
-        logos_lex, manual_lex, naive, naive_slice, prefix_comp_then_logos_lex,
-        single_pass_prefix_comp_then_logos_lex, OTHER, SAMPLE,
-    };
-
-    duplicate! {
-        [
-            func name;
-            [naive::pooled::day13] [naive_pool];
-            [naive::no_pool::day13] [naive_no_pool];
-            [naive_slice::no_pool::day13] [naive_slice_no_pool];
-            [naive_slice::pooled::day13] [naive_slice_pool];
-            [manual_lex::day13] [manual_lex_pool];
-            [logos_lex::day13] [logos_lex];
-            [prefix_comp_then_logos_lex::day13::<16>] [prefix_comp_then_logos_lex];
-            [single_pass_prefix_comp_then_logos_lex::day13] [single_pass_prefix_comp];
-        ]
-        #[test]
-        fn name() {
-            assert_eq!(func(SAMPLE), 13);
-            assert_eq!(func(OTHER), 1 + 0 + 5 + 7 + 8 + 10);
-            assert_eq!(func("[]\n[]"), 0);
-        }
-    }
 }

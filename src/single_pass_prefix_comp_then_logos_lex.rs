@@ -1,7 +1,7 @@
+//! like [crate::prefix_comp_then_logos_lex], but lazily finds the right line.
+
 use logos::{Lexer, Logos};
 use std::{cmp::Ordering, iter};
-
-pub const DESCRIPTION: &str = "";
 
 pub fn day13(mut input: &str) -> usize {
     let mut count = 0;

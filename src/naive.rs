@@ -1,12 +1,15 @@
+//! Char-by-char parser, collects each line into Vec< Vec | String>
+
 use std::{cmp::Ordering, iter::Peekable};
 
-use self::res_pool::Alloc;
-use crate::shared::day13_framework;
+use crate::shared::{
+    day13_framework,
+    res_pool::{Alloc, GlobalHeapProxy, ResPool},
+};
 
+/// creates and drop Vecs and Strings each line (global heap).
 pub mod no_pool {
-    use super::{day13_generalized, res_pool::GlobalHeapProxy};
-
-    pub const DESCRIPTION: &str = "Parses each line into Vec< Vec | String>";
+    use super::{day13_generalized, GlobalHeapProxy};
 
     pub fn day13(input: &str) -> usize {
         let list_pool = &mut GlobalHeapProxy {};
@@ -14,10 +17,10 @@ pub mod no_pool {
         day13_generalized(input, list_pool, string_pool)
     }
 }
-pub mod pooled {
-    use super::{day13_generalized, res_pool::ResPool};
 
-    pub const DESCRIPTION: &str = "naive with object pools for Vec and String.";
+/// Uses an object pool for the Vecs and Strings
+pub mod pooled {
+    use super::{day13_generalized, ResPool};
 
     pub fn day13(input: &str) -> usize {
         let new_list = &mut Vec::new;
@@ -206,49 +209,6 @@ impl Element {
                 str.truncate(0);
                 string_pool.deposit(str);
             }
-        }
-    }
-}
-
-mod res_pool {
-    pub trait Alloc<T> {
-        fn deposit(&mut self, item: T);
-        fn withdraw(&mut self) -> T;
-    }
-
-    pub struct GlobalHeapProxy();
-
-    impl<Resource: Default> Alloc<Resource> for GlobalHeapProxy {
-        fn deposit(&mut self, _: Resource) {
-            // drop item
-        }
-
-        fn withdraw(&mut self) -> Resource {
-            Resource::default()
-        }
-    }
-
-    pub struct ResPool<'a, T> {
-        items: Vec<T>,
-        make_new: &'a mut dyn FnMut() -> T,
-    }
-
-    impl<'a, T> ResPool<'a, T> {
-        pub(super) fn new(supplier: &'a mut dyn FnMut() -> T) -> Self {
-            ResPool {
-                items: Vec::new(),
-                make_new: supplier,
-            }
-        }
-    }
-
-    impl<'a, T> Alloc<T> for ResPool<'a, T> {
-        fn deposit(&mut self, item: T) {
-            self.items.push(item);
-        }
-
-        fn withdraw(&mut self) -> T {
-            self.items.pop().unwrap_or_else(&mut self.make_new)
         }
     }
 }

@@ -1,7 +1,7 @@
+//! shared input parsing framework w/ trivial compare function
+
 use crate::shared::day13_framework;
 use std::cmp::Ordering;
-
-pub const DESCRIPTION: &str = "shared input parsing framework w/ trivial compare function";
 
 pub fn day13(input: &str) -> usize {
     day13_framework(input, compare)

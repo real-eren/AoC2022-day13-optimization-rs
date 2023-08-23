@@ -1,3 +1,5 @@
+//! Like [crate::naive], but uses &str instead of String
+
 use std::{
     cmp::Ordering,
     iter::Peekable,
@@ -5,23 +7,23 @@ use std::{
     str::CharIndices,
 };
 
-use self::res_pool::Alloc;
-use crate::shared::day13_framework;
+use crate::shared::{
+    day13_framework,
+    res_pool::{self, Alloc},
+};
 
+/// Creates and drops Vecs each line.
 pub mod no_pool {
     use super::{day13_generalized, res_pool::GlobalHeapProxy};
-
-    pub const DESCRIPTION: &str = "Parses each line into Vec< Vec | &str>";
 
     pub fn day13(input: &str) -> usize {
         let list_pool = &mut GlobalHeapProxy {};
         day13_generalized(input, list_pool)
     }
 }
+/// Uses an object pool for the Vecs.
 pub mod pooled {
     use super::{day13_generalized, res_pool::ResPool};
-
-    pub const DESCRIPTION: &str = "naive slice with object pools for Vec.";
 
     pub fn day13(input: &str) -> usize {
         let new_list = &mut Vec::new;
@@ -203,48 +205,5 @@ fn launder<Old, New>(mut old: Vec<Old>) -> Vec<New> {
         let ptr = old.as_mut_ptr();
         forget(old);
         Vec::from_raw_parts(ptr as *mut New, len, capacity)
-    }
-}
-
-mod res_pool {
-    pub trait Alloc<T> {
-        fn deposit(&mut self, item: T);
-        fn withdraw(&mut self) -> T;
-    }
-
-    pub struct GlobalHeapProxy();
-
-    impl<Resource: Default> Alloc<Resource> for GlobalHeapProxy {
-        fn deposit(&mut self, _: Resource) {
-            // drop item
-        }
-
-        fn withdraw(&mut self) -> Resource {
-            Resource::default()
-        }
-    }
-
-    pub struct ResPool<'a, T> {
-        items: Vec<T>,
-        make_new: &'a mut dyn FnMut() -> T,
-    }
-
-    impl<'a, T> ResPool<'a, T> {
-        pub(super) fn new(supplier: &'a mut dyn FnMut() -> T) -> Self {
-            ResPool {
-                items: Vec::new(),
-                make_new: supplier,
-            }
-        }
-    }
-
-    impl<'a, T> Alloc<T> for ResPool<'a, T> {
-        fn deposit(&mut self, item: T) {
-            self.items.push(item);
-        }
-
-        fn withdraw(&mut self) -> T {
-            self.items.pop().unwrap_or_else(&mut self.make_new)
-        }
     }
 }

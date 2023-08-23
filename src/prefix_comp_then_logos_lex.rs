@@ -1,8 +1,8 @@
+//! skip common prefix in inputs, then lex with logos until decision made. *Does not fully validate input*  
+
 use crate::shared::day13_framework;
 use logos::{Lexer, Logos};
 use std::{cmp::Ordering, iter};
-
-pub const DESCRIPTION: &str = "skip common prefix in inputs, then lex with logos until decision made. *Does not fully validate input*";
 
 pub fn day13<const N: usize>(input: &str) -> usize {
     day13_framework(input, compare::<N>)

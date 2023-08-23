@@ -1,11 +1,11 @@
+//! O(1) space, char-by-char hand-rolled lexer
+
 use crate::shared::day13_framework;
 use std::{
     cmp::Ordering,
     iter::{Enumerate, Peekable},
     str::Bytes,
 };
-
-pub const DESCRIPTION: &str = "O(1) space, char-by-char hand-rolled lexer";
 
 pub fn day13(input: &str) -> usize {
     day13_framework(input, compare)
