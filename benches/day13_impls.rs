@@ -7,7 +7,7 @@ use std::{
     str::FromStr,
 };
 
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
+use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use day13_compare::{
     input_handling_baseline, logos_lex, manual_lex, naive, naive_slice, prefix_comp_then_logos_lex,
     single_pass_prefix_comp_then_logos_lex, SAMPLE,
@@ -139,9 +139,10 @@ fn bench_day13_impls(c: &mut Criterion) {
         .chain(for_each_file(Path::new("./benches/resources/")).iter())
     {
         let Some(ref input) = input_fn() else {
-                println!("failed to generate/retrieve input for {name}");
-                continue;
+            println!("failed to generate/retrieve input for {name}");
+            continue;
         };
+        group.throughput(Throughput::Bytes(input.len() as u64));
 
         duplicate! {
             [
