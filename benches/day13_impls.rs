@@ -118,11 +118,13 @@ fn bench_day13_impls(c: &mut Criterion) {
                     let path = dir_entry.path();
                     if path.is_file() {
                         Some(TestData {
-                            name: format!(
-                                "file-{}",
-                                path.as_path().file_name().unwrap().to_string_lossy()
-                            )
-                            .into(),
+                            name: path
+                                .as_path()
+                                .file_name()
+                                .unwrap()
+                                .to_string_lossy()
+                                .into_owned()
+                                .into(),
                             input_fn: Box::new(move || from_file(path.as_path()).map(Cow::Owned)),
                         })
                     } else {

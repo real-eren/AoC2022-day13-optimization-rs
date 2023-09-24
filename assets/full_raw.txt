@@ -1,0 +1,241 @@
+Day13_A/naive :: pooled/original sample
+                        time:   [2.9381 µs 2.9488 µs 2.9596 µs]
+                        thrpt:  [59.613 MiB/s 59.830 MiB/s 60.049 MiB/s]
+Day13_A/naive :: no_pool/original sample
+                        time:   [3.8875 µs 3.8927 µs 3.8982 µs]
+                        thrpt:  [45.259 MiB/s 45.323 MiB/s 45.383 MiB/s]
+Day13_A/naive_slice :: pooled/original sample
+                        time:   [2.1357 µs 2.1375 µs 2.1394 µs]
+                        thrpt:  [82.467 MiB/s 82.540 MiB/s 82.611 MiB/s]
+Day13_A/naive_slice :: no_pool/original sample
+                        time:   [2.3218 µs 2.3251 µs 2.3288 µs]
+                        thrpt:  [75.761 MiB/s 75.879 MiB/s 75.989 MiB/s]
+Day13_A/manual_lex/original sample
+                        time:   [853.80 ns 855.69 ns 857.65 ns]
+                        thrpt:  [205.71 MiB/s 206.18 MiB/s 206.64 MiB/s]
+Day13_A/logos_lex/original sample
+                        time:   [773.31 ns 774.67 ns 776.09 ns]
+                        thrpt:  [227.33 MiB/s 227.75 MiB/s 228.15 MiB/s]
+Day13_A/input_handling_baseline/original sample
+                        time:   [152.90 ns 153.39 ns 153.98 ns]
+                        thrpt:  [1.1190 GiB/s 1.1232 GiB/s 1.1268 GiB/s]
+Day13_A/single_pass_prefix_comp_then_logos_lex/original sample
+                        time:   [203.44 ns 203.95 ns 204.63 ns]
+                        thrpt:  [862.17 MiB/s 865.05 MiB/s 867.22 MiB/s]
+Day13_A/prefix_comp_then_logos_lex16/original sample
+                        time:   [236.18 ns 240.17 ns 245.36 ns]
+                        thrpt:  [719.06 MiB/s 734.60 MiB/s 747.01 MiB/s]
+Day13_A/prefix_comp_then_logos_lex128/original sample
+                        time:   [256.40 ns 258.75 ns 260.96 ns]
+                        thrpt:  [676.09 MiB/s 681.87 MiB/s 688.09 MiB/s]
+Day13_A/naive :: pooled/orig sample repeated 1K
+                        time:   [2.1932 ms 2.2061 ms 2.2207 ms]
+                        thrpt:  [80.304 MiB/s 80.837 MiB/s 81.314 MiB/s]
+Day13_A/naive :: no_pool/orig sample repeated 1K
+                        time:   [4.0594 ms 4.0616 ms 4.0639 ms]
+                        thrpt:  [43.883 MiB/s 43.907 MiB/s 43.931 MiB/s]
+Day13_A/naive_slice :: pooled/orig sample repeated 1K
+                        time:   [1.7307 ms 1.7481 ms 1.7807 ms]
+                        thrpt:  [100.15 MiB/s 102.02 MiB/s 103.04 MiB/s]
+Day13_A/naive_slice :: no_pool/orig sample repeated 1K
+                        time:   [2.4763 ms 2.4863 ms 2.4993 ms]
+                        thrpt:  [71.354 MiB/s 71.726 MiB/s 72.017 MiB/s]
+Day13_A/manual_lex/orig sample repeated 1K
+                        time:   [914.89 µs 915.59 µs 916.49 µs]
+                        thrpt:  [194.58 MiB/s 194.78 MiB/s 194.93 MiB/s]
+Day13_A/logos_lex/orig sample repeated 1K
+                        time:   [830.35 µs 831.61 µs 833.02 µs]
+                        thrpt:  [214.08 MiB/s 214.44 MiB/s 214.77 MiB/s]
+Day13_A/input_handling_baseline/orig sample repeated 1K
+                        time:   [155.68 µs 156.03 µs 156.39 µs]
+                        thrpt:  [1.1136 GiB/s 1.1162 GiB/s 1.1187 GiB/s]
+Day13_A/single_pass_prefix_comp_then_logos_lex/orig sample repeated 1K
+                        time:   [212.38 µs 223.37 µs 236.13 µs]
+                        thrpt:  [755.23 MiB/s 798.38 MiB/s 839.70 MiB/s]
+Day13_A/prefix_comp_then_logos_lex16/orig sample repeated 1K
+                        time:   [246.14 µs 248.69 µs 252.47 µs]
+                        thrpt:  [706.35 MiB/s 717.10 MiB/s 724.51 MiB/s]
+Day13_A/prefix_comp_then_logos_lex128/orig sample repeated 1K
+                        time:   [241.37 µs 249.48 µs 260.80 µs]
+                        thrpt:  [683.81 MiB/s 714.84 MiB/s 738.85 MiB/s]
+Day13_A/naive :: pooled/single 10kB number, last digit different
+                        time:   [31.454 µs 31.484 µs 31.525 µs]
+                        thrpt:  [605.00 MiB/s 605.78 MiB/s 606.36 MiB/s]
+Day13_A/naive :: no_pool/single 10kB number, last digit different
+                        time:   [31.283 µs 31.302 µs 31.322 µs]
+                        thrpt:  [608.92 MiB/s 609.31 MiB/s 609.68 MiB/s]
+Day13_A/naive_slice :: pooled/single 10kB number, last digit different
+                        time:   [32.018 µs 32.046 µs 32.080 µs]
+                        thrpt:  [594.53 MiB/s 595.16 MiB/s 595.69 MiB/s]
+Day13_A/naive_slice :: no_pool/single 10kB number, last digit different
+                        time:   [32.557 µs 33.747 µs 35.411 µs]
+                        thrpt:  [538.60 MiB/s 565.17 MiB/s 585.81 MiB/s]
+Day13_A/manual_lex/single 10kB number, last digit different
+                        time:   [17.032 µs 17.116 µs 17.218 µs]
+                        thrpt:  [1.0817 GiB/s 1.0882 GiB/s 1.0936 GiB/s]
+Day13_A/logos_lex/single 10kB number, last digit different
+                        time:   [7.9980 µs 8.0065 µs 8.0157 µs]
+                        thrpt:  [2.3236 GiB/s 2.3263 GiB/s 2.3288 GiB/s]
+Day13_A/input_handling_baseline/single 10kB number, last digit different
+                        time:   [1.2914 µs 1.2936 µs 1.2964 µs]
+                        thrpt:  [14.367 GiB/s 14.398 GiB/s 14.423 GiB/s]
+Day13_A/single_pass_prefix_comp_then_logos_lex/single 10kB number, last digit different
+                        time:   [1.0138 µs 1.0152 µs 1.0166 µs]
+                        thrpt:  [18.321 GiB/s 18.347 GiB/s 18.371 GiB/s]
+Day13_A/prefix_comp_then_logos_lex16/single 10kB number, last digit different
+                        time:   [1.6702 µs 1.6719 µs 1.6739 µs]
+                        thrpt:  [11.127 GiB/s 11.140 GiB/s 11.152 GiB/s]
+Day13_A/prefix_comp_then_logos_lex128/single 10kB number, last digit different
+                        time:   [1.6486 µs 1.6538 µs 1.6597 µs]
+                        thrpt:  [11.222 GiB/s 11.262 GiB/s 11.298 GiB/s]
+Day13_A/naive :: pooled/single 10kB number, first digit different
+                        time:   [31.200 µs 32.430 µs 34.857 µs]
+                        thrpt:  [547.17 MiB/s 588.11 MiB/s 611.30 MiB/s]
+Day13_A/naive :: no_pool/single 10kB number, first digit different
+                        time:   [31.523 µs 31.545 µs 31.571 µs]
+                        thrpt:  [604.11 MiB/s 604.62 MiB/s 605.04 MiB/s]
+Day13_A/naive_slice :: pooled/single 10kB number, first digit different
+                        time:   [31.410 µs 31.429 µs 31.449 µs]
+                        thrpt:  [606.46 MiB/s 606.84 MiB/s 607.21 MiB/s]
+Day13_A/naive_slice :: no_pool/single 10kB number, first digit different
+                        time:   [31.728 µs 31.754 µs 31.780 µs]
+                        thrpt:  [600.15 MiB/s 600.64 MiB/s 601.12 MiB/s]
+Day13_A/manual_lex/single 10kB number, first digit different
+                        time:   [16.586 µs 16.597 µs 16.608 µs]
+                        thrpt:  [1.1215 GiB/s 1.1222 GiB/s 1.1230 GiB/s]
+Day13_A/logos_lex/single 10kB number, first digit different
+                        time:   [8.0414 µs 8.0459 µs 8.0509 µs]
+                        thrpt:  [2.3135 GiB/s 2.3149 GiB/s 2.3162 GiB/s]
+Day13_A/input_handling_baseline/single 10kB number, first digit different
+                        time:   [1.2842 µs 1.2862 µs 1.2881 µs]
+                        thrpt:  [14.459 GiB/s 14.481 GiB/s 14.504 GiB/s]
+Day13_A/single_pass_prefix_comp_then_logos_lex/single 10kB number, first digit different
+                        time:   [1.3084 µs 1.3113 µs 1.3150 µs]
+                        thrpt:  [14.164 GiB/s 14.204 GiB/s 14.235 GiB/s]
+Day13_A/prefix_comp_then_logos_lex16/single 10kB number, first digit different
+                        time:   [1.3256 µs 1.3324 µs 1.3410 µs]
+                        thrpt:  [13.889 GiB/s 13.979 GiB/s 14.050 GiB/s]
+Day13_A/prefix_comp_then_logos_lex128/single 10kB number, first digit different
+                        time:   [1.3685 µs 1.3694 µs 1.3706 µs]
+                        thrpt:  [13.590 GiB/s 13.601 GiB/s 13.611 GiB/s]
+Day13_A/naive :: pooled/long_mixed_lines
+                        time:   [7.3484 µs 7.3536 µs 7.3588 µs]
+                        thrpt:  [99.918 MiB/s 99.990 MiB/s 100.06 MiB/s]
+Day13_A/naive :: no_pool/long_mixed_lines
+                        time:   [11.766 µs 11.787 µs 11.812 µs]
+                        thrpt:  [62.249 MiB/s 62.382 MiB/s 62.493 MiB/s]
+Day13_A/naive_slice :: pooled/long_mixed_lines
+                        time:   [6.0697 µs 6.1573 µs 6.2605 µs]
+                        thrpt:  [117.45 MiB/s 119.42 MiB/s 121.14 MiB/s]
+Day13_A/naive_slice :: no_pool/long_mixed_lines
+                        time:   [7.3121 µs 7.3169 µs 7.3223 µs]
+                        thrpt:  [100.42 MiB/s 100.49 MiB/s 100.56 MiB/s]
+Day13_A/manual_lex/long_mixed_lines
+                        time:   [2.1179 µs 2.1208 µs 2.1242 µs]
+                        thrpt:  [346.15 MiB/s 346.70 MiB/s 347.17 MiB/s]
+Day13_A/logos_lex/long_mixed_lines
+                        time:   [1.6763 µs 1.6791 µs 1.6823 µs]
+                        thrpt:  [437.06 MiB/s 437.89 MiB/s 438.64 MiB/s]
+Day13_A/input_handling_baseline/long_mixed_lines
+                        time:   [259.65 ns 260.18 ns 260.73 ns]
+                        thrpt:  [2.7540 GiB/s 2.7598 GiB/s 2.7655 GiB/s]
+Day13_A/single_pass_prefix_comp_then_logos_lex/long_mixed_lines
+                        time:   [745.44 ns 748.28 ns 751.94 ns]
+                        thrpt:  [977.85 MiB/s 982.64 MiB/s 986.38 MiB/s]
+Day13_A/prefix_comp_then_logos_lex16/long_mixed_lines
+                        time:   [801.09 ns 802.14 ns 803.23 ns]
+                        thrpt:  [915.41 MiB/s 916.66 MiB/s 917.85 MiB/s]
+Day13_A/prefix_comp_then_logos_lex128/long_mixed_lines
+                        time:   [871.70 ns 874.37 ns 879.11 ns]
+                        thrpt:  [836.39 MiB/s 840.93 MiB/s 843.51 MiB/s]
+Day13_A/naive :: pooled/right_longer
+                        time:   [5.1020 µs 5.1048 µs 5.1077 µs]
+                        thrpt:  [91.863 MiB/s 91.915 MiB/s 91.965 MiB/s]
+Day13_A/naive :: no_pool/right_longer
+                        time:   [7.5253 µs 7.7156 µs 8.0184 µs]
+                        thrpt:  [58.517 MiB/s 60.813 MiB/s 62.351 MiB/s]
+Day13_A/naive_slice :: pooled/right_longer
+                        time:   [3.9119 µs 3.9162 µs 3.9208 µs]
+                        thrpt:  [119.67 MiB/s 119.81 MiB/s 119.94 MiB/s]
+Day13_A/naive_slice :: no_pool/right_longer
+                        time:   [4.7387 µs 4.7849 µs 4.8770 µs]
+                        thrpt:  [96.209 MiB/s 98.061 MiB/s 99.017 MiB/s]
+Day13_A/manual_lex/right_longer
+                        time:   [1.2826 µs 1.2838 µs 1.2851 µs]
+                        thrpt:  [365.11 MiB/s 365.49 MiB/s 365.82 MiB/s]
+Day13_A/logos_lex/right_longer
+                        time:   [1.0017 µs 1.0045 µs 1.0081 µs]
+                        thrpt:  [465.43 MiB/s 467.08 MiB/s 468.42 MiB/s]
+Day13_A/input_handling_baseline/right_longer
+                        time:   [160.13 ns 160.46 ns 160.83 ns]
+                        thrpt:  [2.8490 GiB/s 2.8557 GiB/s 2.8616 GiB/s]
+Day13_A/single_pass_prefix_comp_then_logos_lex/right_longer
+                        time:   [898.57 ns 899.28 ns 900.04 ns]
+                        thrpt:  [521.32 MiB/s 521.76 MiB/s 522.17 MiB/s]
+Day13_A/prefix_comp_then_logos_lex16/right_longer
+                        time:   [951.36 ns 954.29 ns 958.03 ns]
+                        thrpt:  [489.76 MiB/s 491.68 MiB/s 493.19 MiB/s]
+Day13_A/prefix_comp_then_logos_lex128/right_longer
+                        time:   [957.46 ns 958.25 ns 959.13 ns]
+                        thrpt:  [489.20 MiB/s 489.65 MiB/s 490.06 MiB/s]
+Day13_A/naive :: pooled/left_longer
+                        time:   [5.0391 µs 5.0444 µs 5.0503 µs]
+                        thrpt:  [92.908 MiB/s 93.016 MiB/s 93.113 MiB/s]
+Day13_A/naive :: no_pool/left_longer
+                        time:   [7.7978 µs 7.8092 µs 7.8246 µs]
+                        thrpt:  [59.966 MiB/s 60.084 MiB/s 60.172 MiB/s]
+Day13_A/naive_slice :: pooled/left_longer
+                        time:   [3.8263 µs 3.8292 µs 3.8322 µs]
+                        thrpt:  [122.44 MiB/s 122.54 MiB/s 122.63 MiB/s]
+Day13_A/naive_slice :: no_pool/left_longer
+                        time:   [4.8742 µs 4.8779 µs 4.8820 µs]
+                        thrpt:  [96.110 MiB/s 96.191 MiB/s 96.263 MiB/s]
+Day13_A/manual_lex/left_longer
+                        time:   [1.2931 µs 1.2941 µs 1.2952 µs]
+                        thrpt:  [362.28 MiB/s 362.58 MiB/s 362.85 MiB/s]
+Day13_A/logos_lex/left_longer
+                        time:   [879.87 ns 881.08 ns 882.52 ns]
+                        thrpt:  [531.67 MiB/s 532.54 MiB/s 533.27 MiB/s]
+Day13_A/input_handling_baseline/left_longer
+                        time:   [156.09 ns 156.52 ns 156.95 ns]
+                        thrpt:  [2.9194 GiB/s 2.9274 GiB/s 2.9356 GiB/s]
+Day13_A/single_pass_prefix_comp_then_logos_lex/left_longer
+                        time:   [879.51 ns 880.16 ns 880.85 ns]
+                        thrpt:  [532.68 MiB/s 533.10 MiB/s 533.49 MiB/s]
+Day13_A/prefix_comp_then_logos_lex16/left_longer
+                        time:   [884.17 ns 885.88 ns 888.31 ns]
+                        thrpt:  [528.20 MiB/s 529.65 MiB/s 530.68 MiB/s]
+Day13_A/prefix_comp_then_logos_lex128/left_longer
+                        time:   [929.77 ns 930.87 ns 931.95 ns]
+                        thrpt:  [503.47 MiB/s 504.06 MiB/s 504.65 MiB/s]
+Day13_A/naive :: pooled/alternating_deep_nesting
+                        time:   [10.731 µs 10.742 µs 10.754 µs]
+                        thrpt:  [52.678 MiB/s 52.733 MiB/s 52.788 MiB/s]
+Day13_A/naive :: no_pool/alternating_deep_nesting
+                        time:   [21.536 µs 22.477 µs 23.521 µs]
+                        thrpt:  [24.084 MiB/s 25.203 MiB/s 26.304 MiB/s]
+Day13_A/naive_slice :: pooled/alternating_deep_nesting
+                        time:   [9.1362 µs 9.1488 µs 9.1636 µs]
+                        thrpt:  [61.819 MiB/s 61.919 MiB/s 62.004 MiB/s]
+Day13_A/naive_slice :: no_pool/alternating_deep_nesting
+                        time:   [14.537 µs 15.266 µs 16.042 µs]
+                        thrpt:  [35.311 MiB/s 37.108 MiB/s 38.969 MiB/s]
+Day13_A/manual_lex/alternating_deep_nesting
+                        time:   [2.6930 µs 2.6970 µs 2.7011 µs]
+                        thrpt:  [209.73 MiB/s 210.04 MiB/s 210.35 MiB/s]
+Day13_A/logos_lex/alternating_deep_nesting
+                        time:   [2.0203 µs 2.1337 µs 2.2576 µs]
+                        thrpt:  [250.93 MiB/s 265.49 MiB/s 280.39 MiB/s]
+Day13_A/input_handling_baseline/alternating_deep_nesting
+                        time:   [134.32 ns 134.60 ns 134.91 ns]
+                        thrpt:  [4.1005 GiB/s 4.1100 GiB/s 4.1185 GiB/s]
+Day13_A/single_pass_prefix_comp_then_logos_lex/alternating_deep_nesting
+                        time:   [2.5151 µs 2.6561 µs 2.8091 µs]
+                        thrpt:  [201.66 MiB/s 213.28 MiB/s 225.23 MiB/s]
+Day13_A/prefix_comp_then_logos_lex16/alternating_deep_nesting
+                        time:   [2.5140 µs 2.5164 µs 2.5188 µs]
+                        thrpt:  [224.90 MiB/s 225.12 MiB/s 225.33 MiB/s]
+Day13_A/prefix_comp_then_logos_lex128/alternating_deep_nesting
+                        time:   [2.6725 µs 2.7557 µs 2.8583 µs]
+                        thrpt:  [198.19 MiB/s 205.57 MiB/s 211.97 MiB/s]
+
