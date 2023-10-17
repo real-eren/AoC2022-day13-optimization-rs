@@ -38,6 +38,21 @@ Several design choices emerged as more effective, covered in corresponding secti
 [Example plots](./assets), from data produced on my machine, are included for visualization purposes,
 though the results will, of course, vary from machine to machine.
 
+## Benchmarks Disclaimer
+Evaluating the performance of a function / small program by measuring its run-time is prone to misleading results.
+If the function is run in a tight loop and the same input is passed every time, this creates an unrealistic scenario.
+The data and instructions will almost always be in the CPU cache and the branch predictor will quickly learn the pattern of branches.
+This is rarely representative of how the function/program will interact with the rest of the program/system.
+Also, factors outside the source code, such as the layout of the binary and environment variables,
+can have surprisingly large effects on the runtime of the program -- Emery Berger covers this in depth in the video linked at the bottom.
+
+More reliable results come from profiling the number of instructions executed and inspecting the generated assembly,
+as well as measuring the branch and cache miss rates.
+The tools described in the [Benchmarks.Profiling section](#Profiling) can help with this.
+However, before comparing instruction counts and other absolute measurements, one must ensure that both runs are doing the same amount of 'work'.
+Criterion, the benchmarking tool used here, runs each case for a fixed amount of time. 
+This can cause more optimal implementations to end up executing more instructions, which is usually a metric we want to lower.
+
 ## Overall Performance Comparisons
 The `input_handling_baseline` (red) is included in the plots below for comparison as the practical limit of performance.
 It splits the input into pairs of lines, but performs a trivial comparison routine.
@@ -70,6 +85,23 @@ The more lines in the input, the greater the effect of object pooling -
 to generalize this to other programs, the more iterations or requests in a workload, the greater the benefit of object pooling.
 As mentioned in the [implementation section](#implementations), this might otherwise be accomplished with arena allocations.
 In fact, that would have a greater impact, as this implementation of object pooling moves the objects as opposed to borrowing them.
+
+
+#### Heaptrack results
+
+Heaptrack for naive_slice::no_pool on orig_repeated for 10s  
+![Heaptrack for naive_slice::no_pool on orig_repeated for 10s](./assets/heaptrack_naive-slice_no-pool_orig-repeated_10s.png)
+
+Heaptrack for naive_slice::pooled on orig_repeated for 10s  
+![Heaptrack for naive_slice::pooled on orig_repeated for 10s](./assets/heaptrack_naive-slice_pooled_orig-repeated_10s.png)
+
+The only difference between these two implementations is the reuse of `Vec`s.
+While the number of iterations is not exactly equal, they were within a factor of 2,
+so we can be confident that there are indeed several magnitudes fewer allocations being done.
+On this input, the pooled variant had `42%` higher throughput.
+
+
+#### Criterion results
 
 pattern passed to criterion bench: `"Day13_A/naive"`
 
@@ -156,7 +188,7 @@ It is also likely that splitting on a single character is easier to optimize tha
 
 #### single_pass_prefix_comp_then_logos_lex
 As seen in the [histograms comparing the throughput of each implementation](#overall-performance-comparisons),
-the single-pass prefix comp implementation, described [here](#single-pass-prefix-compare---singlepassprefixcompthenlogoslexrs)
+the single-pass prefix comp implementation, described [here](#single-pass-prefix-compare)
 
 #### General
 This can be applied to parsing code that relies on a buffered reader and/or nested splits,
@@ -224,7 +256,9 @@ pub(crate) fn day13_framework(
 
 ## Line compare
 
-### Naive Parsing ([naive.rs](./src/naive.rs) and [naive_slice.rs](./src/naive_slice.rs))
+### Naive Parsing 
+[naive.rs](./src/naive.rs) and [naive_slice.rs](./src/naive_slice.rs)  
+
 Character-by-character parsing. 
 The entire parse tree is constructed for both lines before the elements are compared.
 ```rust
@@ -237,11 +271,14 @@ There are 4 implementations:
 2 with object pools (and 2 without),
 and 2 with string slices (and 2 without).
 
-### Lexing ([manual_lex.rs](./src/manual_lex.rs) and [logos_lex.rs](./src/logos_lex.rs))
+### Lexing
+[manual_lex.rs](./src/manual_lex.rs) and [logos_lex.rs](./src/logos_lex.rs)  
+
 Instead of creating and storing the parse trees, the individual lexemes from both lines are compared one-by-one.
 A small (and constant) amount of extra space is used to track the 'depth' of braces.
 
 1 implementation w/ character-by-character lexing and another using the `Logos` lexer generator crate.
+
 #### Logos Lexer definition
 ```rust
 #[logos(skip r"[ ]+")]
@@ -258,13 +295,17 @@ enum Token {
 ```
 The `LBraces` token groups together consecutive `[`s because this save some cycles on deeply nested lists without pessimizing normal inputs, and does not complicate the implementation.
 
-### Prefix Compare + Lexing ([prefix_comp_then_logos_lex.rs](./src/prefix_comp_then_logos_lex.rs))
+### Prefix Compare + Lexing
+[prefix_comp_then_logos_lex.rs](./src/prefix_comp_then_logos_lex.rs)  
+
 This approach assumes the input is syntactically valid.
 Byte-wise compare the left and right lines until either one line ends or a difference is found. 
 Then a lexer is run on the remainders until either a decision is made or the two lines reach an equivalence point again.
 Then the process repeats.
 
-### 'Single-pass' Prefix Compare + ... ([single_pass_prefix_comp_then_logos_lex.rs](./src/single_pass_prefix_comp_then_logos_lex.rs))
+### 'Single-pass' Prefix Compare + ... 
+[single_pass_prefix_comp_then_logos_lex.rs](./src/single_pass_prefix_comp_then_logos_lex.rs)  
+
 Similar to the previous one, however the right line is not sliced before the comparison.
 Instead, the compare subroutine takes in the `left` and *`rem`* string slices,
 reads no further than the first new line in `rem`,
@@ -308,6 +349,8 @@ In other languages, and possibly a later version of Rust, this could be achieved
 
 
 # Benchmarking
+
+The [benchmarking disclaimer section](#benchmarks-disclaimer) details the drawbacks of only measuring run-time and the motivation for using the below profilers.
 
 ## Measuring
 [criterion](https://docs.rs/criterion/latest/criterion/) is used for conducting the benchmarks.  
